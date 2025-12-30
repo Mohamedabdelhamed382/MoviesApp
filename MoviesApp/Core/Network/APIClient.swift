@@ -8,11 +8,15 @@
 import Foundation
 import Combine
 
+@MainActor
 protocol NetworkServiceProtocol {
-    func request<T: Decodable>(_ endpoint: Endpoint, type: T.Type) -> AnyPublisher<T, APIError>
+    // Keep this nonisolated unless you specifically need main-actor access.
+    func request<T: Decodable>(_ endpoint: Endpoint, type: T.Type) async throws(APIError) -> T
 }
 
+@MainActor
 final class NetworkService: NetworkServiceProtocol {
+
     private let urlSession: URLSession
     private let decoder: JSONDecoder
 
@@ -21,9 +25,9 @@ final class NetworkService: NetworkServiceProtocol {
         self.decoder = decoder
     }
 
-    func request<T: Decodable>(_ endpoint: Endpoint, type: T.Type) -> AnyPublisher<T, APIError> {
+    func request<T>(_ endpoint: Endpoint, type: T.Type) async throws(APIError) -> T where T : Decodable {
         guard let url = endpoint.url() else {
-            return Fail(error: .invalidURL).eraseToAnyPublisher()
+            throw APIError.invalidURL
         }
 
         var request = URLRequest(url: url)
@@ -43,35 +47,36 @@ final class NetworkService: NetworkServiceProtocol {
             print("Body: \(bodyString)")
         }
 
-        return urlSession.dataTaskPublisher(for: request)
-            .tryMap { output in
-                if let httpResponse = output.response as? HTTPURLResponse {
-                    print("📩 [RESPONSE] Status Code: \(httpResponse.statusCode)")
-                }
+        do {
+            let (data, response) = try await urlSession.data(for: request)
 
-                // 🖨 Pretty Print JSON Response
-                if let jsonObject = try? JSONSerialization.jsonObject(with: output.data, options: []),
-                   let prettyData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
-                   let prettyString = String(data: prettyData, encoding: .utf8) {
-                    print("JSON Response:\n\(prettyString)")
-                } else {
-                    print("Raw Response:\n\(String(data: output.data, encoding: .utf8) ?? "N/A")")
-                }
-
-                if let httpResponse = output.response as? HTTPURLResponse,
-                   !(200...299).contains(httpResponse.statusCode) {
+            if let httpResponse = response as? HTTPURLResponse {
+                print("📩 [RESPONSE] Status Code: \(httpResponse.statusCode)")
+                if !(200...299).contains(httpResponse.statusCode) {
                     throw APIError.serverError(httpResponse.statusCode)
                 }
+            }
 
-                return output.data
+            // 🖨 Pretty Print JSON Response
+            if let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
+               let prettyData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
+               let prettyString = String(data: prettyData, encoding: .utf8) {
+                print("JSON Response:\n\(prettyString)")
+            } else {
+                print("Raw Response:\n\(String(data: data, encoding: .utf8) ?? "N/A")")
             }
-            .decode(type: T.self, decoder: decoder)
-            .mapError { error in
-                print("❌ Network Error: \(error)")
-                if let apiError = error as? APIError { return apiError }
-                if error is DecodingError { return .decodingError(error) }
-                return .networkError(error)
+
+            do {
+                return try decoder.decode(T.self, from: data)
+            } catch {
+                print("❌ Decoding Error: \(error)")
+                throw APIError.decodingError(error)
             }
-            .eraseToAnyPublisher()
+        } catch let apiError as APIError {
+            throw apiError
+        } catch {
+            print("❌ Network Error: \(error)")
+            throw APIError.networkError(error)
+        }
     }
 }

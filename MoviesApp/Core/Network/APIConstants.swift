@@ -8,14 +8,17 @@
 import Foundation
 
 enum APIConstants {
-
     static var apiKey: String {
-        Bundle.main.infoDictionary?["TMDB_API_KEY"] as? String ?? ""
+        let key = Bundle.main.infoDictionary?["TMDB_API_KEY"] as? String ?? ""
+        print("API Key loaded: \(key.isEmpty ? "EMPTY" : "LOADED")")
+        return key
     }
-
+    
     static var authorization: String {
-        Bundle.main.infoDictionary?["TMDB_AUTH_TOKEN"] as? String ?? ""
+        let token = Bundle.main.infoDictionary?["TMDB_AUTH_TOKEN"] as? String ?? ""
+        print("Auth Token loaded: \(token.isEmpty ? "EMPTY" : "LOADED")")
+        return token
     }
-
+    
     static let accept = "application/json"
 }

@@ -15,7 +15,7 @@ final class FetchGenresUseCase {
         self.repository = repository
     }
 
-    func execute() -> AnyPublisher<[Genre], AppError> {
-        repository.fetchGenres()
+    func execute() async throws -> [Genre] {
+        return try await repository.fetchGenres()
     }
 }

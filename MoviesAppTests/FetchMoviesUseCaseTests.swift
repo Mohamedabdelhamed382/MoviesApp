@@ -1,5 +1,5 @@
 //
-//  FetchGenresUseCaseAPITests.swift
+//  FetchMoviesUseCaseTests.swift
 //  MoviesApp
 //
 //  Created by Mohamed abdelhamed on 30/12/2025.
@@ -10,10 +10,10 @@ import XCTest
 import Combine
 @testable import MoviesApp
 
-final class FetchGenresUseCaseAPITests: XCTestCase {
-
+final class FetchMoviesUseCaseTests: XCTestCase {
+    
     private var cancellables: Set<AnyCancellable>!
-    private var useCase: FetchGenresUseCase!
+    private var useCase: FetchMoviesUseCase!
 
     @MainActor
     override func setUp() {
@@ -24,7 +24,7 @@ final class FetchGenresUseCaseAPITests: XCTestCase {
         let networkService = NetworkService()
         let remoteDataSource = MoviesRemoteDataSourceImpl(network: networkService)
         let repository = MoviesRepositoryImpl(remoteDataSource: remoteDataSource)
-        useCase = FetchGenresUseCase(repository: repository)
+        useCase = FetchMoviesUseCase(repository: repository)
     }
 
     override func tearDown() {
@@ -34,15 +34,15 @@ final class FetchGenresUseCaseAPITests: XCTestCase {
     }
 
     @MainActor
-    func testFetchGenresAPI() async throws {
-        // Use async/await since useCase.execute() is async
-        let genres = try await useCase.execute()
+    func testFetchMoviesAPI() async throws {
+        
+        let movies = try await useCase.execute(page: 1, genres: [28])
 
-        print("Fetched Genres Count: \(genres.count)")
-        for genre in genres {
-            print("Genre ID: \(genre.id), Name: \(genre.name)")
+        print("Fetched movies Count: \(movies.movies.count)")
+        for movie in movies.movies {
+            print("Genre ID: \(movie.id), Name: \(movie.title)")
         }
-
-        XCTAssertFalse(genres.isEmpty, "Genres should not be empty")
+        
+        XCTAssertFalse(movies.movies.isEmpty, "movies should not be empty")
     }
 }

@@ -18,10 +18,12 @@ enum HTTPMethod: String {
 struct Endpoint {
     let path: String
     let method: HTTPMethod
-    var queryItems: [URLQueryItem] = []
+    var queryItems: [URLQueryItem] = [
+        URLQueryItem(name: "language", value: "en")
+    ]
     var headers: [String: String] = [
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwOGYxNzAwYmM4ZWJkYTUzMDJlOTM4MDI4YTlkMDM4NyIsIm5iZiI6MTYzNzYxNDk2Ni43ODcwMDAyLCJzdWIiOiI2MTljMDU3NjQ5NzU2MDAwNjE1YjdjMzciLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.U_maexpx43Ga1dvPnLnQlQJDAs0VP9yX_1sYlkjHRgk",
-        "accept": "application/json"
+        "Authorization": APIConstants.authorization,
+        "accept": APIConstants.accept
     ]
 
     var body: Data? = nil
@@ -42,10 +44,7 @@ enum APIEndpoints {
     static func genres() -> Endpoint {
         Endpoint(
             path: "/genre/movie/list",
-            method: .get,
-            queryItems: [
-                URLQueryItem(name: "language", value: "en")
-            ]
+            method: .get
         )
     }
 }

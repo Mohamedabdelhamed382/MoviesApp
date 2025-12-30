@@ -8,5 +8,14 @@
 import Foundation
 
 enum APIConstants {
-    static let apiKey = "08f1700bc8ebda5302e938028a9d0387"
+
+    static var apiKey: String {
+        Bundle.main.infoDictionary?["TMDB_API_KEY"] as? String ?? ""
+    }
+
+    static var authorization: String {
+        Bundle.main.infoDictionary?["TMDB_AUTH_TOKEN"] as? String ?? ""
+    }
+
+    static let accept = "application/json"
 }

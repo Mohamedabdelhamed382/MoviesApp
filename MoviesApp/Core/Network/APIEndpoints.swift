@@ -5,7 +5,6 @@
 //  Created by Mohamed abdelhamed on 30/12/2025.
 //
 
-
 import Foundation
 
 enum HTTPMethod: String {
@@ -15,7 +14,7 @@ enum HTTPMethod: String {
     case delete = "DELETE"
 }
 
-struct Endpoint {
+struct Endpoint: Sendable {
     let path: String
     let method: HTTPMethod
     var queryItems: [URLQueryItem] = [
@@ -47,4 +46,31 @@ enum APIEndpoints {
             method: .get
         )
     }
+    
+    static func moviesList(
+           page: Int,
+           genres: [Int]? = nil
+       ) -> Endpoint {
+
+           var queryItems: [URLQueryItem] = [
+               URLQueryItem(name: "include_adult", value: "false"),
+               URLQueryItem(name: "include_video", value: "false"),
+               URLQueryItem(name: "language", value: "en-US"),
+               URLQueryItem(name: "sort_by", value: "popularity.desc"),
+               URLQueryItem(name: "page", value: "\(page)")
+           ]
+
+           if let genres = genres, !genres.isEmpty {
+               let value = genres.map(String.init).joined(separator: ",") // AND
+               queryItems.append(
+                   URLQueryItem(name: "with_genres", value: value)
+               )
+           }
+
+           return Endpoint(
+               path: "/discover/movie",
+               method: .get,
+               queryItems: queryItems
+           )
+       }
 }

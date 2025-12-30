@@ -8,7 +8,8 @@
 import Combine
 
 protocol MoviesRemoteDataSource {
-    func fetchGenres() -> AnyPublisher<[GenreDTO], APIError>
+    func fetchGenres() async throws -> [GenreDTO]
+    func fetchMoviesList(page: Int, genres: [Int]?) async throws -> MoviesResponseDTO
 }
 
 final class MoviesRemoteDataSourceImpl: MoviesRemoteDataSource {
@@ -19,12 +20,16 @@ final class MoviesRemoteDataSourceImpl: MoviesRemoteDataSource {
         self.network = network
     }
 
-    func fetchGenres() -> AnyPublisher<[GenreDTO], APIError> {
-        network.request(
+    func fetchGenres() async throws -> [GenreDTO] {
+        let response = try await network.request(
             APIEndpoints.genres(),
             type: GenresResponseDTO.self
         )
-        .map(\.genres)
-        .eraseToAnyPublisher()
+        return response.genres
+    }
+    
+    func fetchMoviesList(page: Int, genres: [Int]?) async throws -> MoviesResponseDTO {
+        let endpoint = APIEndpoints.moviesList(page: page, genres: genres)
+        return try await network.request(endpoint, type: MoviesResponseDTO.self)
     }
 }

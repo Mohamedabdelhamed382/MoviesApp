@@ -13,6 +13,9 @@ protocol MoviesRepository {
     
     // MARK: - Movies
     func fetchMoviesList(page: Int, genres: [Int]?) async throws -> MoviesPage
+
+    // MARK: - Movie Details
+    func fetchMovieDetails(id: Int) async throws -> MovieDetails
 }
 
 final class MoviesRepositoryImpl: MoviesRepository {
@@ -35,6 +38,12 @@ final class MoviesRepositoryImpl: MoviesRepository {
     func fetchMoviesList(page: Int, genres: [Int]?) async throws -> MoviesPage {
         let responseDTO = try await remoteDataSource.fetchMoviesList(page: page, genres: genres)
         return responseDTO.toDomain()
+    }
+
+    // MARK: - Movie Details
+    func fetchMovieDetails(id: Int) async throws -> MovieDetails {
+        let dto = try await remoteDataSource.fetchMovieDetails(id: id)
+        return dto.toDomain()
     }
 }
 

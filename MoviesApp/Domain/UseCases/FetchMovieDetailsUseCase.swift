@@ -5,8 +5,6 @@
 //  Created by Mohamed abdelhamed on 30/12/2025.
 //
 
-import Combine
-
 final class FetchMovieDetailsUseCase {
 
     private let repository: MoviesRepository
@@ -15,7 +13,7 @@ final class FetchMovieDetailsUseCase {
         self.repository = repository
     }
 
-    func execute(movieId: Int) async throws -> MovieDetails {
+    func execute(movieId: Int) async throws -> MovieDetailsEntity {
             return try await repository.fetchMovieDetails(id: movieId)
     }
 }

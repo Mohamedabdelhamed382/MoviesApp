@@ -40,37 +40,3 @@ struct MovieDTO: Decodable {
         case genreIds = "genre_ids"
     }
 }
-
-// MARK: - Movie Mapper
-extension MovieDTO {
-    func toDomain() -> Movie {
-        let year: String?
-        if let releaseDate = releaseDate {
-            year = String(releaseDate.split(separator: "-").first ?? "")
-        } else {
-            year = nil
-        }
-        
-        return Movie(
-            id: id,
-            title: title,
-            overview: overview,
-            imageUrl: posterPath ?? backdropPath,
-            releaseYear: year,
-            rating: voteAverage,
-            genreIds: genreIds
-        )
-    }
-}
-
-// MARK: - Movies Page Mapper
-extension MoviesResponseDTO {
-    func toDomain() -> MoviesPage {
-        MoviesPage(
-            page: page,
-            movies: results.map { $0.toDomain() },
-            totalPages: totalPages,
-            totalResults: totalResults
-        )
-    }
-}

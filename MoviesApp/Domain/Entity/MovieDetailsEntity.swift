@@ -6,14 +6,14 @@
 //
 
 
-struct MovieDetails {
+struct MovieDetailsEntity {
     let id: Int
     let title: String
     let overview: String
     let posterUrl: String?
     let backdropUrl: String?
     let releaseYearMonth: String?   // YYYY-MM
-    let genres: [Genre]
+    let genres: [GenreEntity]
     let homepage: String?
     let budget: Int?
     let revenue: Int?

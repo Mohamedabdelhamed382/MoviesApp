@@ -5,8 +5,6 @@
 //  Created by Mohamed abdelhamed on 30/12/2025.
 //
 
-import Combine
-
 final class FetchGenresUseCase {
 
     private let repository: MoviesRepository
@@ -15,7 +13,7 @@ final class FetchGenresUseCase {
         self.repository = repository
     }
 
-    func execute() async throws -> [Genre] {
+    func execute() async throws -> [GenreEntity] {
         return try await repository.fetchGenres()
     }
 }

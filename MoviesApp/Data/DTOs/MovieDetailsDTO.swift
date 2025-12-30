@@ -31,28 +31,6 @@ struct MovieDetailsDTO: Decodable {
         case voteAverage = "vote_average"
         case spokenLanguages = "spoken_languages"
     }
-
-    // MARK: - Mapper to Domain
-    func toDomain() -> MovieDetails {
-        return MovieDetails(
-            id: id,
-            title: title,
-            overview: overview,
-            posterUrl: posterPath,
-            backdropUrl: backdropPath,
-            releaseYearMonth: releaseDate.flatMap {
-                let components = $0.split(separator: "-")
-                return components.count >= 2 ? "\(components[0])-\(components[1])" : String(components.first ?? "")
-            },
-            genres: genres.map { $0.toDomain() },
-            homepage: homepage,
-            budget: budget,
-            revenue: revenue,
-            spokenLanguages: spokenLanguages.map { $0.englishName },
-            status: status,
-            runtime: runtime
-        )
-    }
 }
 
 struct SpokenLanguageDTO: Decodable {

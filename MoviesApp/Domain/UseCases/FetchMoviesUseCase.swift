@@ -5,8 +5,6 @@
 //  Created by Mohamed abdelhamed on 30/12/2025.
 //
 
-import Foundation
-
 final class FetchMoviesUseCase {
     
     private let repository: MoviesRepository
@@ -15,7 +13,7 @@ final class FetchMoviesUseCase {
         self.repository = repository
     }
     
-    func execute(page: Int, genres: [Int]? = nil) async throws -> MoviesPage {
+    func execute(page: Int, genres: [Int]? = nil) async throws -> MoviesPageEntity {
         return try await repository.fetchMoviesList(page: page, genres: genres)
     }
 }

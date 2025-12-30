@@ -33,3 +33,15 @@ struct Endpoint {
         return components.url
     }
 }
+
+enum APIEndpoints {
+    static func genres() -> Endpoint {
+        Endpoint(
+            path: "/genre/movie/list",
+            method: .get,
+            queryItems: [
+                URLQueryItem(name: "language", value: "en")
+            ]
+        )
+    }
+}

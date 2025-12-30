@@ -73,4 +73,14 @@ enum APIEndpoints {
                queryItems: queryItems
            )
        }
+    
+    static func movieDetails(id: Int) -> Endpoint {
+        return Endpoint(
+            path: "/movie/\(id)",
+            method: .get,
+            queryItems: [
+                URLQueryItem(name: "language", value: "en-US")
+            ]
+        )
+    }
 }

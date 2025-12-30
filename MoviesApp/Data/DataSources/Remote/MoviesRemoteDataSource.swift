@@ -10,6 +10,7 @@ import Combine
 protocol MoviesRemoteDataSource {
     func fetchGenres() async throws -> [GenreDTO]
     func fetchMoviesList(page: Int, genres: [Int]?) async throws -> MoviesResponseDTO
+    func fetchMovieDetails(id: Int) async throws -> MovieDetailsDTO
 }
 
 final class MoviesRemoteDataSourceImpl: MoviesRemoteDataSource {
@@ -31,5 +32,10 @@ final class MoviesRemoteDataSourceImpl: MoviesRemoteDataSource {
     func fetchMoviesList(page: Int, genres: [Int]?) async throws -> MoviesResponseDTO {
         let endpoint = APIEndpoints.moviesList(page: page, genres: genres)
         return try await network.request(endpoint, type: MoviesResponseDTO.self)
+    }
+
+    func fetchMovieDetails(id: Int) async throws -> MovieDetailsDTO {
+        let endpoint = APIEndpoints.movieDetails(id: id)
+        return try await network.request(endpoint, type: MovieDetailsDTO.self)
     }
 }

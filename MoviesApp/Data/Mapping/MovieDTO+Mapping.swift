@@ -8,18 +8,19 @@
 // MARK: - Movie Mapper
 extension MovieDTO {
     func toDomain() -> MovieEntity {
-        let year: String?
-        if let releaseDate = releaseDate {
-            year = String(releaseDate.split(separator: "-").first ?? "")
-        } else {
-            year = nil
+        var year: String {
+            String(releaseDate.split(separator: "-").first ?? "")
+        }
+        
+        var imageUrl: String {
+                "https://image.tmdb.org/t/p/w500\(posterPath)"
         }
         
         return MovieEntity(
             id: id,
             title: title,
             overview: overview,
-            imageUrl: posterPath ?? backdropPath,
+            posterPath: imageUrl,
             releaseYear: year,
             rating: voteAverage,
             genreIds: genreIds

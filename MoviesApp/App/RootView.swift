@@ -5,22 +5,18 @@
 //  Created by Mohamed abdelhamed on 30/12/2025.
 //
 
-
 import SwiftUI
 
 struct RootView: View {
-    var body: some View {
-        NavigationView {
-            Text("Welcome to MoviesApp")
-                .font(.title)
-                .padding()
-                .navigationTitle("Movies")
-        }
-    }
-}
 
-struct RootView_Previews: PreviewProvider {
-    static var previews: some View {
-        RootView()
+    @StateObject private var coordinator = AppCoordinator()
+
+    var body: some View {
+        NavigationStack(path: $coordinator.path) {
+            coordinator.start()
+                .navigationDestination(for: AppRoute.self) { route in
+                    coordinator.build(route: route)
+                }
+        }
     }
 }

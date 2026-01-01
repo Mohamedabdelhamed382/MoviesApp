@@ -9,62 +9,83 @@
 import SwiftUI
 
 struct MoviesListView<ViewModel: MoviesListViewModelProtocols>: View {
-    
+
     @StateObject private var viewModel: ViewModel
-    
+
     private let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
-    
+
     init(viewModel: ViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            
-            SearchBar(text: Binding(
+
+            searchSection
+            titleSection
+            GenreGridSectionView(viewModel: viewModel)
+            contentSection
+        }
+        .onAppear(perform: viewModel.onAppear)
+    }
+}
+
+// MARK: - Sections
+private extension MoviesListView {
+
+    var searchSection: some View {
+        SearchBar(
+            text: Binding(
                 get: { viewModel.searchText },
                 set: { viewModel.onSearch(text: $0) }
-            ))
-            
-            Text("Watch New Movies")
-                .font(.system(size: 30, weight: .bold))
-                .foregroundColor(.yellow)
-                .padding(.horizontal)
-            
-            GenreGridSectionView(viewModel: viewModel)
-            
-            if viewModel.movies.isEmpty {
-                
-            } else {
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(viewModel.movies.indices, id: \.self) { index in
-                            let movie = viewModel.movies[index]
-                            
-                            MovieGridItemView(movie: movie)
-                                .onAppear {
-                                    if index == viewModel.movies.count - 1 {
-                                        viewModel.loadNextPage()
-                                    }
-                                }
+            )
+        )
+    }
+
+    var titleSection: some View {
+        Text("Watch New Movies")
+            .font(.system(size: 30, weight: .bold))
+            .foregroundColor(.yellow)
+            .padding(.horizontal)
+    }
+
+    @ViewBuilder
+    var contentSection: some View {
+        if viewModel.movies.isEmpty {
+            MoviesListPlaceholderView(
+                isLoading: viewModel.isLoading
+            )
+        } else {
+            moviesGrid
+        }
+    }
+
+    var moviesGrid: some View {
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 16) {
+
+                ForEach(viewModel.movies.indices, id: \.self) { index in
+                    let movie = viewModel.movies[index]
+
+                    MovieGridItemView(movie: movie)
+                        .onAppear {
+                            if index == viewModel.movies.count - 1 {
+                                viewModel.loadNextPage()
+                            }
                         }
-                        
-                        if viewModel.isLoading {
-                            ProgressView()
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .gridCellColumns(2)
-                        }
-                    }
-                    .padding(.horizontal)
+                }
+
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .gridCellColumns(2)
                 }
             }
-        }
-        .onAppear {
-            viewModel.onAppear()
+            .padding(.horizontal)
         }
     }
 }

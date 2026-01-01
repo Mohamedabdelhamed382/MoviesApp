@@ -11,10 +11,10 @@ struct MovieDetailsDTO: Decodable {
     let id: Int
     let title: String
     let overview: String
-    let posterPath: String?
-    let backdropPath: String?
+    let posterPath: String
+    let backdropPath: String
     let releaseDate: String?
-    let runtime: Int?
+    let runtime: Int
     let voteAverage: Double
     let genres: [GenreDTO]
     let homepage: String?

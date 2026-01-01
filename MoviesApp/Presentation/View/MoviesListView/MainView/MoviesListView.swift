@@ -11,14 +11,16 @@ import SwiftUI
 struct MoviesListView<ViewModel: MoviesListViewModelProtocols>: View {
 
     @StateObject private var viewModel: ViewModel
+    private let onSelect: (Int) -> Void
 
     private let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
 
-    init(viewModel: ViewModel) {
+    init(viewModel: ViewModel, onSelect: @escaping (Int) -> Void) {
         _viewModel = StateObject(wrappedValue: viewModel)
+        self.onSelect = onSelect
     }
 
     var body: some View {
@@ -71,6 +73,10 @@ private extension MoviesListView {
                     let movie = viewModel.movies[index]
 
                     MovieGridItemView(movie: movie)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            onSelect(movie.id)
+                        }
                         .onAppear {
                             if index == viewModel.movies.count - 1 {
                                 viewModel.loadNextPage()
@@ -89,3 +95,4 @@ private extension MoviesListView {
         }
     }
 }
+

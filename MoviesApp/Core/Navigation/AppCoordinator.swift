@@ -5,13 +5,12 @@
 //  Created by Mohamed abdelhamed on 30/12/2025.
 //
 
-
 import SwiftUI
 import Combine
 
 final class AppCoordinator: ObservableObject {
 
-    @Published var path = NavigationPath()
+    @Published var path: [AppRoute] = []
 
     // MARK: - Start View
     @ViewBuilder
@@ -24,7 +23,14 @@ final class AppCoordinator: ObservableObject {
     func build(route: AppRoute) -> some View {
         switch route {
         case .moviesList:
-            MoviesListBuilder.build()
+            MoviesListBuilder.build { [weak self] movieId in
+                guard let self else { return }
+                self.path.append(.movieDetails(moviesId: movieId))
+            }
+
+        case .movieDetails(let moviesId):
+            MovieDetailsBuilder.build(movieId: moviesId)
+            
         }
     }
 }

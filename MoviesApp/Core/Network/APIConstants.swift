@@ -21,4 +21,7 @@ enum APIConstants {
     }
     
     static let accept = "application/json"
+    
+    static let imagePathURL = "https://image.tmdb.org/t/p/w500"
+
 }

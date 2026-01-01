@@ -10,7 +10,7 @@ import SwiftUI
 
 enum MoviesListBuilder {
 
-    static func build() -> some View {
+    static func build(onSelect: @escaping (Int) -> Void) -> some View {
 
         // ⚡ Network
         let networkService = NetworkService()
@@ -41,6 +41,7 @@ enum MoviesListBuilder {
         )
 
         // ⚡ View (Dependency Inversion)
-        return MoviesListView(viewModel: viewModel)
+        return MoviesListView(viewModel: viewModel, onSelect: onSelect)
     }
 }
+

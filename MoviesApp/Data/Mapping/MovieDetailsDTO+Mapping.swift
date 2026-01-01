@@ -9,16 +9,26 @@
 // MARK: - Mapper to Domain
 extension MovieDetailsDTO {
     func toDomain() -> MovieDetailsEntity {
+        
+        var year: String {
+            String(releaseDate?.split(separator: "-").first ?? "")
+        }
+        
+        var posterUrl: String {
+            "\(APIConstants.imagePathURL)\(posterPath)"
+        }
+        
+        var backdropUrl: String {
+            "\(APIConstants.imagePathURL)\(backdropPath)"
+        }
+        
         return MovieDetailsEntity(
             id: id,
             title: title,
             overview: overview,
-            posterUrl: posterPath,
-            backdropUrl: backdropPath,
-            releaseYearMonth: releaseDate.flatMap {
-                let components = $0.split(separator: "-")
-                return components.count >= 2 ? "\(components[0])-\(components[1])" : String(components.first ?? "")
-            },
+            posterUrl: backdropUrl,
+            backdropUrl: posterUrl,
+            releaseYearMonth: year,
             genres: genres.map { $0.toDomain() },
             homepage: homepage,
             budget: budget,

@@ -49,10 +49,8 @@ struct MovieDetailsView<ViewModel: MovieDetailsViewModelProtocols>: View {
     // MARK: - Backdrop / Header
     private var backdropView: some View {
         Group {
-            if let urlString = viewModel.movie?.backdropUrl, let url = URL(string: urlString) {
-                AsyncImage(url: url) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
+            if let urlString = viewModel.movie?.backdropUrl {
+                CachedImageView(urlString: urlString) {
                     Color.gray.opacity(0.3)
                 }
                 .frame(height: 320)
@@ -64,18 +62,14 @@ struct MovieDetailsView<ViewModel: MovieDetailsViewModelProtocols>: View {
     // MARK: - Poster Image
     private var posterView: some View {
         Group {
-            if let urlString = viewModel.movie?.posterUrl, let url = URL(string: urlString) {
-                AsyncImage(url: url) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 100, height: 150)
-                        .cornerRadius(8)
-                } placeholder: {
+            if let urlString = viewModel.movie?.posterUrl {
+                CachedImageView(urlString: urlString) {
                     Color.gray.opacity(0.3)
                         .frame(width: 100, height: 150)
                         .cornerRadius(8)
                 }
+                .frame(width: 100, height: 150)
+                .cornerRadius(8)
             }
         }
     }

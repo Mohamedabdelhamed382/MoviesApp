@@ -23,7 +23,11 @@ final class FetchMoviesUseCaseTests: XCTestCase {
         // ⚡ Use real repository with real remoteDataSource
         let networkService = NetworkService()
         let remoteDataSource = MoviesRemoteDataSourceImpl(network: networkService)
-        let repository = MoviesRepositoryImpl(remoteDataSource: remoteDataSource)
+        let localDataSource = MoviesLocalDataSourceImpl()
+        let repository = MoviesRepositoryImpl(
+            remoteDataSource: remoteDataSource,
+            localDataSource: localDataSource
+        )
         useCase = FetchMoviesUseCase(repository: repository)
     }
 

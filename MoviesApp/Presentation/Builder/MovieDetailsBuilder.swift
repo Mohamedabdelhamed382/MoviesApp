@@ -17,8 +17,14 @@ enum MovieDetailsBuilder {
         // ⚡ Remote Data Source
         let remoteDataSource = MoviesRemoteDataSourceImpl(network: networkService)
         
+        // ⚡ Local Data Source
+        let localDataSource = MoviesLocalDataSourceImpl()
+        
         // ⚡ Repository
-        let repository = MoviesRepositoryImpl(remoteDataSource: remoteDataSource)
+        let repository = MoviesRepositoryImpl(
+            remoteDataSource: remoteDataSource,
+            localDataSource: localDataSource
+        )
         
         // ⚡ UseCases
         let useCase = FetchMovieDetailsUseCase(repository: repository)

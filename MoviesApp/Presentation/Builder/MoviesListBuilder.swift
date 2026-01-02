@@ -19,10 +19,14 @@ enum MoviesListBuilder {
         let remoteDataSource = MoviesRemoteDataSourceImpl(
             network: networkService
         )
+        
+        // ⚡ Local Data Source
+        let localDataSource = MoviesLocalDataSourceImpl()
 
         // ⚡ Repository
         let repository = MoviesRepositoryImpl(
-            remoteDataSource: remoteDataSource
+            remoteDataSource: remoteDataSource,
+            localDataSource: localDataSource
         )
 
         // ⚡ UseCases

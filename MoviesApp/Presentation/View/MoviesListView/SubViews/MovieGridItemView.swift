@@ -30,21 +30,9 @@ struct MovieGridItemView: View {
 private extension MovieGridItemView {
 
     var posterView: some View {
-        if let url = URL(string: movie.posterPath) {
-            return AnyView(
-                AsyncImage(url: url) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                } placeholder: {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .gray))
-                }
-            )
-        } else {
-            return AnyView(
-                Color.gray
-            )
+        CachedImageView(urlString: movie.posterPath) {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .gray))
         }
     }
 

@@ -13,7 +13,7 @@ final class FetchMoviesUseCase {
         self.repository = repository
     }
     
-    func execute(page: Int, genres: [Int]?) async throws -> MoviesPageEntity {
-        return try await repository.fetchMoviesList(page: page, genres: genres)
+    func execute(page: Int) async throws -> MoviesPageEntity {
+        return try await repository.fetchMoviesList(page: page)
     }
 }

@@ -154,14 +154,9 @@ final class MockMoviesRepository: MoviesRepository {
         return genresResult
     }
     
-    func fetchMoviesList(page: Int, genres: [Int]?) async throws -> MoviesPageEntity {
-        guard var movies = moviesResult?.movies else {
+    func fetchMoviesList(page: Int) async throws -> MoviesPageEntity {
+        guard let movies = moviesResult?.movies else {
             return MoviesPageEntity(page: 1, movies: [], totalPages: 1, totalResults: 0)
-        }
-
-        if let genres = genres, !genres.isEmpty {
-            let genresSet = Set(genres)
-            movies = movies.filter { !Set($0.genreIds).isDisjoint(with: genresSet) }
         }
 
         return MoviesPageEntity(

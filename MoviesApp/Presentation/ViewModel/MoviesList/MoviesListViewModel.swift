@@ -56,15 +56,7 @@ extension MoviesListViewModel {
 
     func onSearch(text: String) {
         searchText = text
-        
-        guard !text.isEmpty else {
-            movies = allMovies
-            return
-        }
-        
-        movies = allMovies.filter {
-            $0.title.lowercased().contains(text.lowercased())
-        }
+        applyFilters()
     }
 
     func toggleGenre(_ genre: GenreEntity) {
@@ -73,7 +65,7 @@ extension MoviesListViewModel {
         } else {
             selectedGenres.insert(genre)
         }
-        refreshData()
+        applyFilters()
     }
 
     func refreshData() {
@@ -81,6 +73,27 @@ extension MoviesListViewModel {
         movies = []
         allMovies = []
         Task { await loadMovies() }
+    }
+    
+    private func applyFilters() {
+        var filtered = allMovies
+        
+        // Apply genre filter
+        let selectedGenreIds = Set(selectedGenres.compactMap { $0?.id })
+        if !selectedGenreIds.isEmpty {
+            filtered = filtered.filter { movie in
+                !Set(movie.genreIds).isDisjoint(with: selectedGenreIds)
+            }
+        }
+        
+        // Apply search filter
+        if !searchText.isEmpty {
+            filtered = filtered.filter {
+                $0.title.lowercased().contains(searchText.lowercased())
+            }
+        }
+        
+        movies = filtered
     }
 }
 
@@ -102,14 +115,10 @@ private extension MoviesListViewModel {
     func loadMovies() async {
             isLoading = true
             do {
-                let genreIds = selectedGenres.compactMap { $0?.id }
-                let result = try await moviesUseCase.execute(
-                    page: currentPage,
-                    genres: genreIds
-                )
+                let result = try await moviesUseCase.execute(page: currentPage)
                 
                 allMovies.append(contentsOf: result.movies)
-                onSearch(text: searchText)
+                applyFilters()
                 isLoading = false
                 
             } catch {

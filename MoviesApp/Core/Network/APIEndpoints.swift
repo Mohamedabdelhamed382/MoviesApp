@@ -9,9 +9,6 @@ import Foundation
 
 enum HTTPMethod: String {
     case get = "GET"
-    case post = "POST"
-    case put = "PUT"
-    case delete = "DELETE"
 }
 
 struct Endpoint: Sendable {
@@ -47,32 +44,19 @@ enum APIEndpoints {
         )
     }
     
-    static func moviesList(
-           page: Int,
-           genres: [Int]? = nil
-       ) -> Endpoint {
-
-           var queryItems: [URLQueryItem] = [
-               URLQueryItem(name: "include_adult", value: "false"),
-               URLQueryItem(name: "include_video", value: "false"),
-               URLQueryItem(name: "language", value: "en-US"),
-               URLQueryItem(name: "sort_by", value: "popularity.desc"),
-               URLQueryItem(name: "page", value: "\(page)")
-           ]
-
-           if let genres = genres, !genres.isEmpty {
-               let value = genres.map(String.init).joined(separator: ",") // AND
-               queryItems.append(
-                   URLQueryItem(name: "with_genres", value: value)
-               )
-           }
-
-           return Endpoint(
-               path: "/discover/movie",
-               method: .get,
-               queryItems: queryItems
-           )
-       }
+    static func moviesList(page: Int) -> Endpoint {
+        return Endpoint(
+            path: "/discover/movie",
+            method: .get,
+            queryItems: [
+                URLQueryItem(name: "include_adult", value: "false"),
+                URLQueryItem(name: "include_video", value: "false"),
+                URLQueryItem(name: "language", value: "en-US"),
+                URLQueryItem(name: "sort_by", value: "popularity.desc"),
+                URLQueryItem(name: "page", value: "\(page)")
+            ]
+        )
+    }
     
     static func movieDetails(id: Int) -> Endpoint {
         return Endpoint(

@@ -10,7 +10,7 @@ protocol MoviesRepository {
     func fetchGenres() async throws -> [GenreEntity]
     
     // MARK: - Movies
-    func fetchMoviesList(page: Int, genres: [Int]?) async throws -> MoviesPageEntity
+    func fetchMoviesList(page: Int) async throws -> MoviesPageEntity
 
     // MARK: - Movie Details
     func fetchMovieDetails(id: Int) async throws -> MovieDetailsEntity

@@ -39,21 +39,19 @@ final class MoviesRepositoryImpl: MoviesRepository {
     }
     
     // MARK: - Movies
-    func fetchMoviesList(page: Int, genres: [Int]?) async throws -> MoviesPageEntity {
+    func fetchMoviesList(page: Int) async throws -> MoviesPageEntity {
         do {
             // 1. Fetch Remote
-            let responseDTO = try await remoteDataSource.fetchMoviesList(page: page, genres: genres)
+            let responseDTO = try await remoteDataSource.fetchMoviesList(page: page)
             let domain = responseDTO.toDomain()
             
-            // 2. Save only if no filters are applied (caching filtered results is complex)
-            if genres == nil || genres?.isEmpty == true {
-                localDataSource.saveMovies(domain.movies, page: page)
-            }
+            // 2. Save Local
+            localDataSource.saveMovies(domain.movies, page: page)
             
             return domain
         } catch {
             // 3. Fallback to Local if remote fails
-            let localMovies = localDataSource.fetchMovies(page: page, genres: genres)
+            let localMovies = localDataSource.fetchMovies(page: page)
             if !localMovies.isEmpty {
                 // For local, we might not have totalPages/totalResults; provide reasonable fallbacks.
                 return MoviesPageEntity(

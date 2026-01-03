@@ -40,7 +40,7 @@ final class FetchMoviesUseCaseTests: XCTestCase {
     @MainActor
     func testFetchMoviesAPI() async throws {
         
-        let movies = try await useCase.execute(page: 1, genres: [28])
+        let movies = try await useCase.execute(page: 1)
 
         print("Fetched movies Count: \(movies.movies.count)")
         for movie in movies.movies {

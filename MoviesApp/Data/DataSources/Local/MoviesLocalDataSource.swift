@@ -9,7 +9,7 @@ import CoreData
 
 protocol MoviesLocalDataSource {
     func saveMovies(_ movies: [MovieEntity], page: Int)
-    func fetchMovies(page: Int, genres: [Int]?) -> [MovieEntity]
+    func fetchMovies(page: Int) -> [MovieEntity]
     
     func saveGenres(_ genres: [GenreEntity])
     func fetchGenres() -> [GenreEntity]
@@ -76,21 +76,9 @@ final class MoviesLocalDataSourceImpl: MoviesLocalDataSource {
         }
     }
     
-    func fetchMovies(page: Int, genres: [Int]?) -> [MovieEntity] {
+    func fetchMovies(page: Int) -> [MovieEntity] {
         let request: NSFetchRequest<MovieCD> = MovieCD.fetchRequest()
-        
-        var predicates: [NSPredicate] = [
-            NSPredicate(format: "page == %d", page)
-        ]
-        
-        if let genres = genres, !genres.isEmpty {
-            // Filter movies that have ANY of the selected genres relation
-            // Core Data many-to-many filtering: SUBQUERY(genres, $g, $g.id IN %@).@count > 0
-            let genrePredicate = NSPredicate(format: "SUBQUERY(genres, $g, $g.id IN %@).@count > 0", genres)
-            predicates.append(genrePredicate)
-        }
-        
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        request.predicate = NSPredicate(format: "page == %d", page)
         
         do {
             let result = try context.fetch(request)
